@@ -1,0 +1,60 @@
+name: 'Validate Latest Version'
+description:
+  'Fails when the configured Maven dependency version is not the latest release
+  on its major.minor branch.'
+author: Twelve Iterations
+
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  rootPath:
+    description: 'Root path of the repository'
+    required: false
+    default: '.'
+  versionCatalog:
+    description: 'Path to the Gradle version catalog, relative to rootPath'
+    required: false
+    default: 'gradle/libs.versions.toml'
+  nexusUrl:
+    description: 'Nexus search API URL'
+    required: false
+    default: 'https://maven.twelveiterations.com/service/rest/v1/search'
+  repository:
+    description: 'Nexus repository to search'
+    required: false
+    default: 'maven-public'
+  groupId:
+    description: 'Maven group id to search'
+    required: false
+    default: 'net.blay09.mods'
+  versionKey:
+    description: 'Version catalog key to check'
+    required: true
+  artifactId:
+    description: 'Maven artifact id to search'
+    required: true
+  rejectOnFutureVersion:
+    description:
+      'Whether to fail when the configured version is newer than the latest
+      Maven release'
+    required: false
+    default: 'true'
+  rejectOnSnapshotVersion:
+    description:
+      'Whether to fail when the configured version contains -SNAPSHOT'
+    required: false
+    default: 'true'
+
+outputs:
+  success:
+    description:
+      'Whether the configured version is the latest release on its major.minor
+      branch'
+  result:
+    description: 'JSON checked dependency version result'
+
+runs:
+  using: node24
+  main: dist/index.js
