@@ -151,7 +151,7 @@ export async function validateLatestVersion(
   }
 
   const branch = versionBranch(configuredVersion)
-  const latestVersion = await findLatestRelease(
+  const latestVersion = await findLatestVersion(
     options,
     dependency.artifactId,
     `${branch}.*`
@@ -197,19 +197,24 @@ export async function validateLatestVersion(
   }
 }
 
-async function findLatestRelease(
+async function findLatestVersion(
   options: ValidateLatestVersionOptions,
   artifactId: string,
   versionPattern: string
 ): Promise<string | undefined> {
   const versions = await searchNexus(options, artifactId, versionPattern)
-  const releases = versions
-    .filter((item) => item.repository === 'maven-releases')
+  const candidates = versions
+    .filter(
+      (item) =>
+        item.repository === 'maven-releases' ||
+        (!options.rejectOnSnapshotVersion &&
+          Boolean(item.version && isSnapshotVersion(item.version)))
+    )
     .map((item) => item.version)
     .filter((version): version is string => Boolean(version))
 
-  releases.sort(compareVersions).reverse()
-  return releases[0]
+  candidates.sort(compareVersions).reverse()
+  return candidates[0]
 }
 
 async function searchNexus(

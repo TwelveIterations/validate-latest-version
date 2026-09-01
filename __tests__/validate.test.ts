@@ -279,6 +279,44 @@ balm = "26.2.0.8-SNAPSHOT"
     expect(result.success).toBe(true)
     expect(result.failures).toEqual([])
   })
+
+  it('accepts a snapshot as latest when no release exists yet', async () => {
+    writeCatalog(`[versions]
+balm = "26.2.0.8-SNAPSHOT"
+`)
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        items: [
+          {
+            version: '26.2.0.8-SNAPSHOT',
+            repository: 'maven-snapshots'
+          }
+        ]
+      })
+    } as Response)
+
+    const result = await validateLatestVersion({
+      rootPath: rootDir,
+      versionCatalog: 'gradle/libs.versions.toml',
+      nexusUrl: 'https://nexus.example/search',
+      repository: 'maven-public',
+      groupId: 'net.blay09.mods',
+      rejectOnFutureVersion: true,
+      rejectOnSnapshotVersion: false,
+      dependency: { versionKey: 'balm', artifactId: 'balm-common' }
+    })
+
+    expect(result).toMatchObject({
+      success: true,
+      failures: [],
+      result: {
+        configuredVersion: '26.2.0.8-SNAPSHOT',
+        latestVersion: '26.2.0.8-SNAPSHOT',
+        upToDate: true
+      }
+    })
+  })
 })
 
 describe('helpers', () => {
