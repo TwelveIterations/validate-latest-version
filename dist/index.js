@@ -28214,13 +28214,23 @@ async function validateLatestVersion(options) {
 async function findLatestVersion(options, artifactId, versionPattern) {
     const versions = await searchNexus(options, artifactId, versionPattern);
     const candidates = versions
-        .filter((item) => item.repository === 'maven-releases' ||
-        (!options.rejectOnSnapshotVersion &&
-            Boolean(item.version && isSnapshotVersion(item.version))))
-        .map((item) => item.version)
+        .filter((item) => {
+        if (item.repository === 'maven-releases') {
+            return true;
+        }
+        return (!options.rejectOnSnapshotVersion &&
+            item.repository === 'maven-snapshots');
+    })
+        .map((item) => normalizeNexusVersion(item))
         .filter((version) => Boolean(version));
     candidates.sort(compareVersions).reverse();
     return candidates[0];
+}
+function normalizeNexusVersion(item) {
+    if (!item.version || item.repository !== 'maven-snapshots') {
+        return item.version;
+    }
+    return item.version.replace(/-\d{8}\.\d{6}-\d+$/, '-SNAPSHOT');
 }
 async function searchNexus(options, artifactId, versionPattern) {
     const queryParams = new URLSearchParams({

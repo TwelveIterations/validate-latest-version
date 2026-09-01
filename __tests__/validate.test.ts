@@ -289,7 +289,7 @@ balm = "26.2.0.8-SNAPSHOT"
       json: async () => ({
         items: [
           {
-            version: '26.2.0.8-SNAPSHOT',
+            version: '26.2.0.8-20260901.171300-11',
             repository: 'maven-snapshots'
           }
         ]
