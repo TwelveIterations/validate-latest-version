@@ -165,6 +165,28 @@ balm = "26.2.0.6"
     })
   })
 
+  it('skips missing catalog keys when rejectIfNotDeclared is disabled', async () => {
+    writeCatalog(`[versions]
+balm = "26.2.0.6"
+`)
+    mockNexusVersions(['26.2.0.6'])
+
+    const result = await validateLatestVersion({
+      rootPath: rootDir,
+      versionCatalog: 'gradle/libs.versions.toml',
+      nexusUrl: 'https://nexus.example/search',
+      repository: 'maven-public',
+      groupId: 'net.blay09.mods',
+      rejectIfNotDeclared: false,
+      rejectOnFutureVersion: true,
+      rejectOnSnapshotVersion: true,
+      dependency: { versionKey: 'shogi', artifactId: 'shogi-common' }
+    })
+
+    expect(result).toEqual({ success: true, failures: [] })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
   it('fails when the configured version is newer than the latest Maven release', async () => {
     writeCatalog(`[versions]
 balm = "26.2.0.8"

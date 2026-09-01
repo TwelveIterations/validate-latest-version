@@ -28162,6 +28162,12 @@ async function validateLatestVersion(options) {
     const dependency = options.dependency;
     const configuredVersion = versions.get(dependency.versionKey);
     if (!configuredVersion) {
+        if (options.rejectIfNotDeclared === false) {
+            return {
+                success: true,
+                failures
+            };
+        }
         failures.push(`Missing ${dependency.versionKey} version in ${options.versionCatalog}`);
         return {
             success: false,
@@ -28266,6 +28272,7 @@ async function run() {
                 'https://maven.twelveiterations.com/service/rest/v1/search',
             repository: getInput('repository', { required: false }) || 'maven-public',
             groupId: getInput('groupId', { required: false }) || 'net.blay09.mods',
+            rejectIfNotDeclared: getBooleanInput('rejectIfNotDeclared', true),
             rejectOnFutureVersion: getBooleanInput('rejectOnFutureVersion', true),
             rejectOnSnapshotVersion: getBooleanInput('rejectOnSnapshotVersion', true),
             dependency: {

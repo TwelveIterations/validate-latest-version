@@ -28,6 +28,7 @@ future/unreleased version or contains `-SNAPSHOT`.
 | `groupId`                 | `net.blay09.mods`                                           | Maven group id to search.                                                |
 | `versionKey`              | Required                                                    | Version catalog key to check.                                            |
 | `artifactId`              | Required                                                    | Maven artifact id to search.                                             |
+| `rejectIfNotDeclared`     | `true`                                                      | Fail when the version key is not declared in the catalog.                |
 | `rejectOnFutureVersion`   | `true`                                                      | Fail when the configured version is newer than the latest Maven release. |
 | `rejectOnSnapshotVersion` | `true`                                                      | Fail when the configured version contains `-SNAPSHOT`.                   |
 

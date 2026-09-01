@@ -71,6 +71,7 @@ describe('run', () => {
       nexusUrl: 'https://nexus.example/search',
       repository: 'maven-public',
       groupId: 'net.blay09.mods',
+      rejectIfNotDeclared: true,
       rejectOnFutureVersion: true,
       rejectOnSnapshotVersion: true,
       dependency: { versionKey: 'balm', artifactId: 'balm-common' }
@@ -127,6 +128,7 @@ describe('run', () => {
       failures: []
     }
     const { run, validateLatestVersion } = await loadRun(result, {
+      rejectIfNotDeclared: 'false',
       rejectOnFutureVersion: 'false',
       rejectOnSnapshotVersion: 'false'
     })
@@ -135,6 +137,7 @@ describe('run', () => {
 
     expect(validateLatestVersion).toHaveBeenCalledWith(
       expect.objectContaining({
+        rejectIfNotDeclared: false,
         rejectOnFutureVersion: false,
         rejectOnSnapshotVersion: false
       })

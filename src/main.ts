@@ -35,6 +35,7 @@ export async function run(): Promise<void> {
         core.getInput('repository', { required: false }) || 'maven-public',
       groupId:
         core.getInput('groupId', { required: false }) || 'net.blay09.mods',
+      rejectIfNotDeclared: getBooleanInput('rejectIfNotDeclared', true),
       rejectOnFutureVersion: getBooleanInput('rejectOnFutureVersion', true),
       rejectOnSnapshotVersion: getBooleanInput('rejectOnSnapshotVersion', true),
       dependency: {

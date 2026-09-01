@@ -12,6 +12,7 @@ export interface ValidateLatestVersionOptions {
   nexusUrl: string
   repository: string
   groupId: string
+  rejectIfNotDeclared?: boolean
   rejectOnFutureVersion: boolean
   rejectOnSnapshotVersion: boolean
   dependency: DependencyConfig
@@ -121,6 +122,13 @@ export async function validateLatestVersion(
 
   const configuredVersion = versions.get(dependency.versionKey)
   if (!configuredVersion) {
+    if (options.rejectIfNotDeclared === false) {
+      return {
+        success: true,
+        failures
+      }
+    }
+
     failures.push(
       `Missing ${dependency.versionKey} version in ${options.versionCatalog}`
     )

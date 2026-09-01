@@ -35,6 +35,12 @@ inputs:
   artifactId:
     description: 'Maven artifact id to search'
     required: true
+  rejectIfNotDeclared:
+    description:
+      'Whether to fail when the version key is not declared in the version
+      catalog'
+    required: false
+    default: 'true'
   rejectOnFutureVersion:
     description:
       'Whether to fail when the configured version is newer than the latest
