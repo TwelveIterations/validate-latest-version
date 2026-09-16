@@ -28182,7 +28182,7 @@ async function validateLatestVersion(options) {
         };
     }
     const branch = versionBranch(configuredVersion);
-    const latestVersion = await findLatestVersion(options, dependency.artifactId, `${branch}.*`);
+    const latestVersion = await findLatestVersion(options, dependency.artifactId, `${branch}.*`, isSnapshotVersion(configuredVersion));
     if (!latestVersion) {
         failures.push(`Could not find a Nexus release for ${dependency.artifactId} ${branch}.*`);
         return {
@@ -28211,7 +28211,7 @@ async function validateLatestVersion(options) {
         failures
     };
 }
-async function findLatestVersion(options, artifactId, versionPattern) {
+async function findLatestVersion(options, artifactId, versionPattern, configuredVersionIsSnapshot) {
     const versions = await searchNexus(options, artifactId, versionPattern);
     const candidates = versions
         .filter((item) => {
@@ -28219,6 +28219,7 @@ async function findLatestVersion(options, artifactId, versionPattern) {
             return true;
         }
         return (!options.rejectOnSnapshotVersion &&
+            configuredVersionIsSnapshot &&
             item.repository === 'maven-snapshots');
     })
         .map((item) => normalizeNexusVersion(item))

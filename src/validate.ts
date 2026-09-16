@@ -154,7 +154,8 @@ export async function validateLatestVersion(
   const latestVersion = await findLatestVersion(
     options,
     dependency.artifactId,
-    `${branch}.*`
+    `${branch}.*`,
+    isSnapshotVersion(configuredVersion)
   )
 
   if (!latestVersion) {
@@ -200,7 +201,8 @@ export async function validateLatestVersion(
 async function findLatestVersion(
   options: ValidateLatestVersionOptions,
   artifactId: string,
-  versionPattern: string
+  versionPattern: string,
+  configuredVersionIsSnapshot: boolean
 ): Promise<string | undefined> {
   const versions = await searchNexus(options, artifactId, versionPattern)
   const candidates = versions
@@ -211,6 +213,7 @@ async function findLatestVersion(
 
       return (
         !options.rejectOnSnapshotVersion &&
+        configuredVersionIsSnapshot &&
         item.repository === 'maven-snapshots'
       )
     })
